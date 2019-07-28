@@ -1,19 +1,35 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-2019'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- task: NuGetToolInstaller@1
+  displayName: "1. Boostrapping NuGet Installer"
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: NuGetCommand@2
+  displayName: "2. Restoring Packages"
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: VSBuild@1
+  displayName: "3. Building Solution"
+  inputs:
+    solution: '$(solution)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: AzureFunctionApp@1
+  displayName: "Deploy Azure Function"
+  inputs:
+    azureSubscription: 'Pay-As-You-Go(a350e174-6d66-410c-8284-59bdef712b9d)'
+    appType: 'functionApp'
+    appName: 'AzCategories2Hashtags'
+    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    deploymentMethod: 'auto'
