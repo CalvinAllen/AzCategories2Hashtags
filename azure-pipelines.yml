@@ -31,11 +31,11 @@ steps:
 - task: ArchiveFiles@2
   displayName: "Archive files"
   inputs:
-    rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
+    rootFolderOrFile: "$(System.DefaultWorkingDirectory)/src/publish_output"
     includeRootFolder: false
-    archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
+    archiveFile: "$(System.DefaultWorkingDirectory)/src/build$(Build.BuildId).zip"
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/src/build$(Build.BuildId).zip'
     name: 'drop'
