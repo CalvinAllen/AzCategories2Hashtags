@@ -6,23 +6,27 @@ pool:
 
 steps:
 - task: DotNetCoreCLI@2
+  displayName: "1. Restore Packages"
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
     feedsToUse: 'select'
 
 - task: DotNetCoreCLI@2
-  inputs:
+  displayName: "2. Build Project"
+  inputs:  
     command: 'build'
     projects: '**/*.csproj'
     arguments: '--configuration Release'
 
 - task: DotNetCoreCLI@2
+  displayName: "3. Publish Project"
   inputs:
     command: 'publish'
     publishWebProjects: false
     projects: '**/*.csproj'
     arguments: '--configuration Release --output publish_output'
+    zipAfterPublish: false
 
 - task: ArchiveFiles@2
   displayName: "Archive files"
