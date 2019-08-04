@@ -1,0 +1,35 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-2019'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: NuGetToolInstaller@1
+  displayName: "1. Boostrapping NuGet Installer"
+
+- task: NuGetCommand@2
+  displayName: "2. Restoring Packages"
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: VSBuild@1
+  displayName: "3. Building Solution"
+  inputs:
+    solution: '$(solution)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: AzureFunctionApp@1
+  displayName: "Deploy Azure Function"
+  inputs:
+    azureSubscription: 'Pay-As-You-Go(a350e174-6d66-410c-8284-59bdef712b9d)'
+    appType: 'functionApp'
+    appName: 'AzCategories2Hashtags'
+    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    deploymentMethod: 'auto'
