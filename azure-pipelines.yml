@@ -29,13 +29,14 @@ steps:
     zipAfterPublish: false
 
 - task: ArchiveFiles@2
-  displayName: "Archive files"
+  displayName: "4. Archive files"
   inputs:
     rootFolderOrFile: "$(System.DefaultWorkingDirectory)/src/publish_output"
     includeRootFolder: false
     archiveFile: "$(System.DefaultWorkingDirectory)/src/build$(Build.BuildId).zip"
 
 - task: PublishBuildArtifacts@1
+  displayName: "5. Publish Artifacts"
   inputs:
     PathtoPublish: '$(System.DefaultWorkingDirectory)/src/build$(Build.BuildId).zip'
     ArtifactName: 'drop'
