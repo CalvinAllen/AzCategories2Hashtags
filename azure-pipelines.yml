@@ -4,11 +4,6 @@ trigger:
 pool:
   vmImage: 'windows-2019'
 
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-
 steps:
 - script: |
     dotnet restore
@@ -18,7 +13,7 @@ steps:
   inputs:
     command: publish
     arguments: '--configuration Release --output publish_output'
-    projects: '*.csproj'
+    projects: '**/*.csproj'
     publishWebProjects: false
     modifyOutputPath: true
     zipAfterPublish: false
