@@ -10,26 +10,27 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@1
-  displayName: "1. Boostrapping NuGet Installer"
+- script: |
+    dotnet restore
+    dotnet build --configuration Release
 
-- task: NuGetCommand@2
-  displayName: "2. Restoring Packages"
+- task: DotNetCoreCLI@2
   inputs:
-    restoreSolution: '$(solution)'
+    command: publish
+    arguments: '--configuration Release --output publish_output'
+    projects: '*.csproj'
+    publishWebProjects: false
+    modifyOutputPath: true
+    zipAfterPublish: false
 
-- task: VSBuild@1
-  displayName: "3. Building Solution"
+- task: ArchiveFiles@2
+  displayName: "Archive files"
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
+    includeRootFolder: false
+    archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
 
-- task: AzureFunctionApp@1
-  displayName: "Deploy Azure Function"
+- task: PublishBuildArtifacts@1
   inputs:
-    azureSubscription: 'Pay-As-You-Go(a350e174-6d66-410c-8284-59bdef712b9d)'
-    appType: 'functionApp'
-    appName: 'AzCategories2Hashtags'
-    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
-    deploymentMethod: 'auto'
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
+    name: 'drop'
