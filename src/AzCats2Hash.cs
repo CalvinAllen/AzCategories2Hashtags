@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,13 +11,13 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace AzCategories2Hashtags
+namespace CalvinAllen.AzureFunctions.AzCats2Hash
 {
-	public static class AzCategories2Hashtags
+	public static class AzCats2Hash
     {
-        [FunctionName("AzCategories2Hashtags")]
+        [FunctionName("Convert")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             try {
@@ -52,7 +51,7 @@ namespace AzCategories2Hashtags
                 }
 
                 if(contentType.Equals("application/json", StringComparison.InvariantCultureIgnoreCase)){
-                    JObject json = JsonConvert.DeserializeObject<JObject>(requestBody);
+                    var json = JsonConvert.DeserializeObject<JObject>(requestBody);
                     var categoryList = JsonConvert
                         .DeserializeObject<JArray>(json[elementName].ToString())
                         .Select(x => CleanCategory(x.Value<string>()));
